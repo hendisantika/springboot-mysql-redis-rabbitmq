@@ -44,4 +44,14 @@ public class EventHandler {
         this.simpMessagingTemplate.convertAndSend(
                 WebSocketConfig.MESSAGE_PREFIX + "/deleteUser", getPath(deletedUser.getUser()));
     }
+
+    /**
+     * Take an {@link user} and get the URI using Spring Data REST's {@link EntityLinks}.
+     *
+     * @param user
+     */
+    private String getPath(User user) {
+        return this.entityLinks.linkForSingleResource(user.getClass(),
+                user.getId()).toUri().getPath();
+    }
 }
