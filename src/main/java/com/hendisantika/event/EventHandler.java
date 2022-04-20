@@ -1,7 +1,10 @@
 package com.hendisantika.event;
 
+import com.hendisantika.config.WebSocketConfig;
+import com.hendisantika.entity.User;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
@@ -25,5 +28,13 @@ public class EventHandler {
     public EventHandler(SimpMessagingTemplate simpMessagingTemplate, EntityLinks entityLinks) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.entityLinks = entityLinks;
+    }
+
+    @EventListener
+    public void newUser(UserCreationEvent<User> savedUser) {
+        log.info("New User created Event");
+
+        this.simpMessagingTemplate.convertAndSend(
+                WebSocketConfig.MESSAGE_PREFIX + "/newUser", getPath(savedUser.getUser()));
     }
 }
