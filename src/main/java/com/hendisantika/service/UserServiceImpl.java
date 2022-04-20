@@ -1,6 +1,7 @@
 package com.hendisantika.service;
 
 import com.hendisantika.entity.User;
+import com.hendisantika.event.UserCreationEvent;
 import com.hendisantika.exception.ResourceNotFoundException;
 import com.hendisantika.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -54,6 +55,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public Page<User> getAllUsers(Integer page, Integer size) {
-        return userRepository.findAll(new PageRequest(page, size));
+        return userRepository.findAll(PageRequest.of(page, size));
+    }
+
+    @Override
+    public User saveUser(User user) {
+        User savedUser = userRepository.save(user);
+        applicationEventPublisher.publishEvent(new UserCreationEvent<User>(savedUser));
+        return savedUser;
     }
 }
