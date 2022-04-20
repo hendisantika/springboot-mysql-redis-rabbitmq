@@ -1,12 +1,17 @@
 package com.hendisantika.service;
 
 import com.hendisantika.entity.User;
+import com.hendisantika.exception.ResourceNotFoundException;
 import com.hendisantika.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,4 +31,23 @@ public class UserServiceImpl implements UserService {
     private final RedisTemplate<String, User> redisTemplate;
     private ApplicationEventPublisher applicationEventPublisher;
 
+    @Override
+    public User findUserById(Long id) {
+        final String key = "user_" + id;
+        final ValueOperations<String, User> operations = redisTemplate.opsForValue();
+        final boolean hasKey = redisTemplate.hasKey(key);
+        if (hasKey) {
+            final User user = operations.get(key);
+            log.info("UserServiceImpl.findUserById() : cache user >> " + user.toString());
+            return user;
+        }
+        final Optional<User> user = Optional.ofNullable(userRepository.findById(id).orElse(null));
+        if (user.isPresent()) {
+            operations.set(key, user.get(), 10, TimeUnit.SECONDS);
+            log.info("UserServiceImpl.findUserById() : cache insert >> " + user.get());
+            return user.get();
+        } else {
+            throw new ResourceNotFoundException();
+        }
+    }
 }
