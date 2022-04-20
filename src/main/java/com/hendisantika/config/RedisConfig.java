@@ -1,6 +1,10 @@
 package com.hendisantika.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,5 +17,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class RedisConfig {
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        final JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(5);
+        poolConfig.setTestOnBorrow(true);
+        poolConfig.setTestOnReturn(true);
 
+        final JedisConnectionFactory connectionFactory = new JedisConnectionFactory(poolConfig);
+        connectionFactory.setUsePool(true);
+        connectionFactory.setHostName("localhost");
+        connectionFactory.setPort(6379);
+        return connectionFactory;
+    }
 }
