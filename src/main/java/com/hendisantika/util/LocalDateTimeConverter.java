@@ -23,4 +23,11 @@ public class LocalDateTimeConverter implements AttributeConverter<LocalDateTime,
                 .map(Timestamp::valueOf)
                 .orElse(null);
     }
+
+    @Override
+    public LocalDateTime convertToEntityAttribute(Timestamp timestamp) {
+        return Optional.ofNullable(timestamp)
+                .map(Timestamp::toLocalDateTime)
+                .orElse(null);
+    }
 }
