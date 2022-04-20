@@ -48,4 +48,9 @@ public abstract class AbstractRestHandler implements ApplicationEventPublisherAw
         log.info("ResourceNotFoundException handler:" + ex.getMessage());
         return new RestErrorInfo(ex, "Sorry I couldn't find it.");
     }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.eventPublisher = applicationEventPublisher;
+    }
 }
