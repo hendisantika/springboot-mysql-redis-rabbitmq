@@ -2,6 +2,7 @@ package com.hendisantika.service;
 
 import com.hendisantika.entity.User;
 import com.hendisantika.event.UserCreationEvent;
+import com.hendisantika.event.UserDeletionEvent;
 import com.hendisantika.exception.ResourceNotFoundException;
 import com.hendisantika.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -74,5 +75,23 @@ public class UserServiceImpl implements UserService {
             log.info("UserServiceImpl.updateUser() : cache update >> " + user);
         }
         return userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        final String key = "user_" + id;
+        final boolean hasKey = redisTemplate.hasKey(key);
+        if (hasKey) {
+            redisTemplate.delete(key);
+            log.info("UserServiceImpl.deleteUser() : cache delete ID >> " + id);
+        }
+        final Optional<User> user = Optional.ofNullable(userRepository.findById(id).orElse(null));
+        if (user.isPresent()) {
+            userRepository.deleteById(id);
+            this.applicationEventPublisher.publishEvent(new UserDeletionEvent<User>(user.get()));
+
+        } else {
+            throw new ResourceNotFoundException();
+        }
     }
 }
