@@ -64,4 +64,15 @@ public class UserServiceImpl implements UserService {
         applicationEventPublisher.publishEvent(new UserCreationEvent<User>(savedUser));
         return savedUser;
     }
+
+    @Override
+    public User updateUser(User user) {
+        final String key = "user_" + user.getId();
+        final boolean hasKey = redisTemplate.hasKey(key);
+        if (hasKey) {
+            redisTemplate.delete(key);
+            log.info("UserServiceImpl.updateUser() : cache update >> " + user);
+        }
+        return userRepository.save(user);
+    }
 }
