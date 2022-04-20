@@ -37,4 +37,11 @@ public class EventHandler {
         this.simpMessagingTemplate.convertAndSend(
                 WebSocketConfig.MESSAGE_PREFIX + "/newUser", getPath(savedUser.getUser()));
     }
+
+    @EventListener
+    public void deleteUser(UserDeletionEvent<User> deletedUser) {
+        log.info("User deleted Event");
+        this.simpMessagingTemplate.convertAndSend(
+                WebSocketConfig.MESSAGE_PREFIX + "/deleteUser", getPath(deletedUser.getUser()));
+    }
 }
