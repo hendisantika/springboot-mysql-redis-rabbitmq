@@ -1,7 +1,9 @@
 package com.hendisantika.config;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
@@ -19,4 +21,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     public static final String MESSAGE_PREFIX = "/topic";
 
+    @Override
+    @CrossOrigin
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/crudApp").withSockJS();
+    }
 }
