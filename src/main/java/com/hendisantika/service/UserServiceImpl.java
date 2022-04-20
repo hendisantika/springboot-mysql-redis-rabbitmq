@@ -6,6 +6,8 @@ import com.hendisantika.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
@@ -49,5 +51,9 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new ResourceNotFoundException();
         }
+    }
+
+    public Page<User> getAllUsers(Integer page, Integer size) {
+        return userRepository.findAll(new PageRequest(page, size));
     }
 }
