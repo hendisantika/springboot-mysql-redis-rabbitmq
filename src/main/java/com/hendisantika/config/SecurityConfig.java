@@ -40,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/signin").permitAll()
+                .antMatchers("/auth/signin", "/swagger-ui/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/api/users/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")

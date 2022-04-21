@@ -84,3 +84,15 @@ logging:
     org:
       hibernate.SQL: DEBUG
       hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+app:
+  local: http://localhot:8080
+  dev: https://heroku.com
+
+# swagger-ui custom path
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /v3/api-docs
+
