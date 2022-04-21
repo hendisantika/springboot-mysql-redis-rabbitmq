@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
+import static org.springframework.http.ResponseEntity.ok;
 
 /**
  * Created by IntelliJ IDEA.
@@ -96,5 +105,38 @@ public class UserController extends AbstractRestHandler {
                            @Parameter(name = "Tha page size", required = true)
                            @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
         return userService.getAllUsers(page, size);
+    }
+
+    @GetMapping("/me")
+    @Operation(
+            summary = "Get User Profile",
+            description = "Get User Profile",
+            tags = {"Users"})
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    description = "Success",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            User.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not Authorized", responseCode = "401",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not found", responseCode = "404",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Internal error", responseCode = "500"
+                    , content = @Content)
+    }
+    )
+    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        Map<Object, Object> model = new HashMap<>();
+        model.put("username", userDetails.getUsername());
+        model.put("roles", userDetails.getAuthorities()
+                .stream()
+                .map(a -> a.getAuthority())
+                .collect(toList())
+        );
+        return ok(model);
     }
 }
