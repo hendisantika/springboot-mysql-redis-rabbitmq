@@ -38,7 +38,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/users")
-@Tag(name = "User Controller", description = "API to manage User Controller")
+@Tag(name = "Users", description = "API to manage User Controller")
 public class UserController extends AbstractRestHandler {
 
     private final UserService userService;

@@ -39,7 +39,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/auth")
-@Tag(name = "Auth Controller", description = "API to manage Auth Controller")
+@Tag(name = "Auth", description = "API to manage Auth Controller")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
 
