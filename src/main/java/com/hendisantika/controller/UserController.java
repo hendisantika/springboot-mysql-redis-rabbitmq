@@ -164,4 +164,33 @@ public class UserController extends AbstractRestHandler {
         final User createUser = userService.saveUser(user);
         response.setHeader("Location", request.getRequestURL().append("/").append(createUser.getId()).toString());
     }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Update a user resource.",
+            description = "You have to provide a valid user ID in the URL and in the payload. The ID attribute can " +
+                    "not be updated.",
+            tags = {"Users"})
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    description = "Success",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            User.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not Authorized", responseCode = "401",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not found", responseCode = "404",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Internal error", responseCode = "500"
+                    , content = @Content)
+    }
+    )
+    public void modifyUser(@Parameter(value = "The ID of the existing user resource.", required = true) @PathVariable("id") Long id, @RequestBody User user) {
+        checkResourceFound(this.userService.findUserById(id));
+        userService.updateUser(user);
+    }
 }
