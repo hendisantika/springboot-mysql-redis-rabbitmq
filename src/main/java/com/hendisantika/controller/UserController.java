@@ -10,10 +10,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,5 +64,37 @@ public class UserController extends AbstractRestHandler {
     public User findOneUser(@Parameter(name = "The ID of the user.", required = true) @PathVariable("id") Long id) {
         log.info("User UserController {}", userService.findUserById(id));
         return userService.findUserById(id);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get a paginated list of all users.",
+            description = "The list is paginated. You can provide a page number (default 0) and a page size (default " +
+                    "100)",
+            tags = {"Users"})
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    description = "Success",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            User.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not Authorized", responseCode = "401",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not found", responseCode = "404",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Internal error", responseCode = "500"
+                    , content = @Content)
+    }
+    )
+    public @ResponseBody
+    Page<User> getAllUsers(@Parameter(name = "The page number (zero-based)", required = true)
+                           @RequestParam(value = "page", defaultValue = DEFAULT_PAGE_NUM) Integer page,
+                           @Parameter(name = "Tha page size", required = true)
+                           @RequestParam(value = "size", defaultValue = DEFAULT_PAGE_SIZE) Integer size) {
+        return userService.getAllUsers(page, size);
     }
 }
