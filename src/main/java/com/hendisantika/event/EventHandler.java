@@ -51,7 +51,8 @@ public class EventHandler {
      * @param user
      */
     private String getPath(User user) {
-        return this.entityLinks.linkForSingleResource(user.getClass(),
+//        return this.entityLinks.linkForSingleResource(user.getClass(),
+        return this.entityLinks.linkForItemResource(user.getClass(),
                 user.getId()).toUri().getPath();
     }
 }

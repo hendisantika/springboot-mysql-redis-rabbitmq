@@ -189,7 +189,8 @@ public class UserController extends AbstractRestHandler {
                     , content = @Content)
     }
     )
-    public void modifyUser(@Parameter(value = "The ID of the existing user resource.", required = true) @PathVariable("id") Long id, @RequestBody User user) {
+    public void modifyUser(@Parameter(name = "The ID of the existing user resource.", required = true) @PathVariable(
+            "id") Long id, @RequestBody User user) {
         checkResourceFound(this.userService.findUserById(id));
         userService.updateUser(user);
     }

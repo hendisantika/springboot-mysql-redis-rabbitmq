@@ -1,5 +1,7 @@
 package com.hendisantika.config;
 
+import com.hendisantika.security.JwtConfigurer;
+import com.hendisantika.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
