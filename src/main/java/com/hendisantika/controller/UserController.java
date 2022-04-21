@@ -193,4 +193,34 @@ public class UserController extends AbstractRestHandler {
         checkResourceFound(this.userService.findUserById(id));
         userService.updateUser(user);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(
+            summary = "Delete a user resource.",
+            description = "You have to provide a valid user ID in the URL. Once deleted the resource can not be " +
+                    "recovered.",
+            tags = {"Users"})
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    description = "Success",
+                    responseCode = "200",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation =
+                            User.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not Authorized", responseCode = "401",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Forbidden", responseCode = "403",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Not found", responseCode = "404",
+                    content = @Content),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "Internal error", responseCode = "500"
+                    , content = @Content)
+    }
+    )
+    public void deleteUser(@Parameter(name = "The ID of the existing user resource.", required = true) @PathVariable(
+            "id") Long id) {
+        checkResourceFound(this.userService.findUserById(id));
+        userService.deleteUser(id);
+    }
 }
